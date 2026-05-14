@@ -43,6 +43,8 @@ export default async function handler(req, res) {
       cancel_url: `${req.headers.origin}/signup`,
     });
 
+res.setHeader('Set-Cookie', `user_email=${email}; Path=/; HttpOnly; SameSite=Lax`);
+
     return res.status(200).json({ url: session.url });
   } catch (err) {
     console.error(err);

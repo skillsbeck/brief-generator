@@ -1,3 +1,40 @@
+export const getServerSideProps = async (context) => {
+  const { createClient } = require('@supabase/supabase-js');
+  
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_KEY
+  );
+
+  const email = context.req.cookies['user_email'];
+
+  if (!email) {
+    return {
+      redirect: {
+        destination: '/signup',
+        permanent: false,
+      },
+    };
+  }
+
+  const { data: user } = await supabase
+    .from('clients')
+    .select('active')
+    .eq('email', email)
+    .single();
+
+  if (!user || !user.active) {
+    return {
+      redirect: {
+        destination: '/signup',
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
+};
+
 import { useState } from "react";
 
 export default function Dashboard() {
